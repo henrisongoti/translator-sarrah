@@ -1,4 +1,4 @@
-package translator.agmip.org.sarrah;
+package org.agmip.translators.sarrah;
 
 import java.io.BufferedReader;
 import java.io.CharArrayWriter;
