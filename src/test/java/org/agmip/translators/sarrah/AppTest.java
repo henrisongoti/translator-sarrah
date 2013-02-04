@@ -1,4 +1,4 @@
-package translator.agmip.org.sarrah;
+package org.agmip.translators.sarrah;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
