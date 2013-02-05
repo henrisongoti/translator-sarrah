@@ -41,7 +41,7 @@ public class SarrahMeteorologieOutputTest {
         if (file2 != null) {
             assertTrue(file2.exists());
             assertTrue(file2.getName().equals("Meteorologie_AgMIP.txt"));
-//            assertTrue(file2.delete());
+            assertTrue(file2.delete());
         }
     }
 }

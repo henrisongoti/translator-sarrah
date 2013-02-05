@@ -41,7 +41,7 @@ public class SarrahPluviometrieOutputTest {
         if (file2 != null) {
             assertTrue(file2.exists());
             assertTrue(file2.getName().equals("Pluviometrie_AgMIP.txt"));
-//            assertTrue(file2.delete());
+            assertTrue(file2.delete());
         }
     }
 }
