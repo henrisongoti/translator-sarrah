@@ -1,0 +1,5 @@
+#separateur|	;date_format|dd/MM/yyyy;heure_format|hh:mm:ss;float_separateur|,;
+CodeStation	Jour	Pluie
+#foreach ( $data in $dataArr )
+$!data.wst_id	$!data.w_date	$!data.pred
+#end

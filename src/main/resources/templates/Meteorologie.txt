@@ -1,0 +1,5 @@
+#separateur|	;date_format|dd/MM/yyyy;heure_format|hh:mm:ss;float_separateur|,;
+CodeStation	Jour	TMax	TMin	TMoy	HMax	HMin	HMoy	Vt	Ins	Rg	ETP
+#foreach ( $data in $dataArr )
+$!data.wst_id	$!data.w_date	$!data.tmax	$!data.tmin	$!data.tavd	$!data.rhmnd	$!data.rhmxd	$!data.HMoy	$!data.wind	$!data.sunh	$!data.srad	$!data.evap
+#end
