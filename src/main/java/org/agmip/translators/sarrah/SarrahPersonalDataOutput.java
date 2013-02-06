@@ -14,10 +14,16 @@ import org.agmip.util.MapUtil.BucketEntry;
  */
 public class SarrahPersonalDataOutput extends SarrahCommonOutput {
 
+    /**
+     * Fill data into the template of PersonalData file
+     *
+     * @param map The Ace data set
+     * @throws IOException
+     */
     @Override
-    public void writeTemplate(String string, Map map) throws IOException {
+    public void writeTemplate(Map map) throws IOException {
 
-        if (!initTemplate("PersonalData")) {
+        if (!loadTemplate("PersonalData")) {
             return;
         }
 

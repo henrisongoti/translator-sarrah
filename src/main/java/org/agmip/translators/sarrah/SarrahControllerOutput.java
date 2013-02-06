@@ -21,19 +21,26 @@ import org.slf4j.LoggerFactory;
  */
 public class SarrahControllerOutput implements TranslatorOutput {
 
-    ArrayList<File> files;
+    private ArrayList<File> files;
     private ArrayList<Future<File>> futFiles;
-    ArrayList<Class<? extends SarrahCommonOutput>> fileTypes;
+    private ArrayList<Class<? extends SarrahCommonOutput>> fileTypes;
     private ExecutorService executor;
     private static Logger LOG = LoggerFactory.getLogger(SarrahControllerOutput.class);
 
+    /**
+     * Output SarraH model input files
+     *
+     * @param path The output path
+     * @param map The Ace data set
+     * @throws IOException
+     */
     @Override
     public void writeFile(String path, Map map) throws IOException {
 
         // Initialization
         files = new ArrayList();
         futFiles = new ArrayList();
-        getClassesAuto();
+        loadAutoClasses();
         executor = Executors.newFixedThreadPool(64);
         SarrahCommonOutput outputTran;
 
@@ -70,10 +77,20 @@ public class SarrahControllerOutput implements TranslatorOutput {
         executor = null;
     }
 
+    /**
+     * Get all output files
+     *
+     * @return The list of output files
+     */
     public ArrayList<File> getOutputFiles() {
         return files;
     }
 
+    /**
+     * Get all output files
+     *
+     * @return The array of output files
+     */
     public File[] getOutputFileArr() {
 
         if (files == null) {
@@ -86,14 +103,20 @@ public class SarrahControllerOutput implements TranslatorOutput {
         return ret;
     }
 
-    private void getClasses() {
+    /**
+     * Load default output translator classes
+     */
+    private void loadDefClasses() {
         fileTypes = new ArrayList();
         fileTypes.add(SarrahMeteorologieOutput.class);
         fileTypes.add(SarrahPersonalDataOutput.class);
         fileTypes.add(SarrahPluviometrieOutput.class);
     }
 
-    private void getClassesAuto() {
+    /**
+     * Scan the package and Load all output translator classes
+     */
+    private void loadAutoClasses() {
 
         String pk = this.getClass().getPackage().getName();
         String path = pk.replace('.', '/');
@@ -119,6 +142,10 @@ public class SarrahControllerOutput implements TranslatorOutput {
                     }
                 }
             }
+        }
+
+        if (fileTypes.isEmpty()) {
+            loadDefClasses();
         }
     }
 }
