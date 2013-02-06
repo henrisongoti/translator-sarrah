@@ -2,6 +2,7 @@ package org.agmip.translators.sarrah;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -22,35 +23,30 @@ public class SarrahControllerOutput implements TranslatorOutput {
 
     ArrayList<File> files;
     private ArrayList<Future<File>> futFiles;
-    Class<? extends SarrahCommonOutput>[] fileTypes;
+    ArrayList<Class<? extends SarrahCommonOutput>> fileTypes;
     private ExecutorService executor;
     private static Logger LOG = LoggerFactory.getLogger(SarrahControllerOutput.class);
 
     @Override
     public void writeFile(String path, Map map) throws IOException {
-        
+
         // Initialization
         files = new ArrayList();
         futFiles = new ArrayList();
-        fileTypes = new Class[]{
-            SarrahMeteorologieOutput.class,
-            SarrahPersonalDataOutput.class,
-            SarrahPluviometrieOutput.class
-        };
+        getClassesAuto();
         executor = Executors.newFixedThreadPool(64);
         SarrahCommonOutput outputTran;
 
         // Set data to translator runner
-        for (int i = 0; i < fileTypes.length; i++) {
+        for (int i = 0; i < fileTypes.size(); i++) {
             try {
-                outputTran = fileTypes[i].getConstructor().newInstance();
+                outputTran = fileTypes.get(i).getConstructor().newInstance();
                 futFiles.add(executor.submit(new SarrahTranslateRunner(outputTran, map, path)));
             } catch (Exception ex) {
                 continue;
             }
-
         }
-        
+
         // Get output result files into output array for zip package
         for (int i = 0; i < futFiles.size(); i++) {
             try {
@@ -73,13 +69,13 @@ public class SarrahControllerOutput implements TranslatorOutput {
         }
         executor = null;
     }
-    
+
     public ArrayList<File> getOutputFiles() {
         return files;
     }
-    
+
     public File[] getOutputFileArr() {
-        
+
         if (files == null) {
             return new File[0];
         }
@@ -88,5 +84,41 @@ public class SarrahControllerOutput implements TranslatorOutput {
             ret[i] = files.get(i);
         }
         return ret;
+    }
+
+    private void getClasses() {
+        fileTypes = new ArrayList();
+        fileTypes.add(SarrahMeteorologieOutput.class);
+        fileTypes.add(SarrahPersonalDataOutput.class);
+        fileTypes.add(SarrahPluviometrieOutput.class);
+    }
+
+    private void getClassesAuto() {
+
+        String pk = this.getClass().getPackage().getName();
+        String path = pk.replace('.', '/');
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        URL url = classloader.getResource(path);
+        File dir = new File(url.getFile().replaceAll("test-classes", "classes"));
+
+        if (!dir.exists()) {
+            return;
+        }
+
+        fileTypes = new ArrayList();
+        for (File f : dir.listFiles()) {
+            if (!f.isDirectory()) {
+                String name = f.getName();
+                if (name.endsWith(".class")) {
+                    try {
+                        Class c = Class.forName(pk + "." + name.substring(0, name.length() - 6));
+                        if (c.getSuperclass().equals(SarrahCommonOutput.class)) {
+                            fileTypes.add(c);
+                        }
+                    } catch (ClassNotFoundException e) {
+                    }
+                }
+            }
+        }
     }
 }
