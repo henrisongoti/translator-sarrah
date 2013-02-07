@@ -125,6 +125,7 @@ public class SarrahControllerOutput implements TranslatorOutput {
         File dir = new File(url.getFile().replaceAll("test-classes", "classes"));
 
         if (!dir.exists()) {
+            loadDefClasses();
             return;
         }
 
