@@ -14,10 +14,16 @@ import org.agmip.util.MapUtil.BucketEntry;
  */
 public class SarrahPluviometrieOutput extends SarrahCommonOutput {
 
+    /**
+     * Fill data into the template of Pluviometrie file
+     *
+     * @param map The Ace data set
+     * @throws IOException
+     */
     @Override
-    public void writeTemplate(String string, Map map) throws IOException {
+    public void writeTemplate(Map map) throws IOException {
 
-        if (!initTemplate("Pluviometrie")) {
+        if (!loadTemplate("Pluviometrie")) {
             return;
         }
 

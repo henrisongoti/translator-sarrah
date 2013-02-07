@@ -4,14 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import org.agmip.core.types.TranslatorOutput;
 import static org.agmip.util.MapUtil.*;
-
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -40,22 +37,43 @@ public abstract class SarrahCommonOutput implements TranslatorOutput {
     protected Template template;
     protected String fileName;
 
+    /**
+     * Output SarraH model input file
+     *
+     * @param path The output path
+     * @param map The Ace data set
+     * @throws IOException
+     */
     @Override
-    public void writeFile(String string, Map map) throws IOException {
+    public void writeFile(String path, Map map) throws IOException {
         setDefVal();
         initVelocity();
-        writeTemplate(string, map);
-        outputFile(string);
+        writeTemplate(map);
+        outputFile(path);
     }
 
-    protected abstract void writeTemplate(String string, Map map) throws IOException;
+    /**
+     * Fill data into the template of SarraH model input file
+     *
+     * @param map The Ace data set
+     * @throws IOException
+     */
+    protected abstract void writeTemplate(Map map) throws IOException;
 
+    /**
+     * initialize the template object
+     */
     private void initVelocity() {
         Velocity.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "src\\main\\resources\\templates");
         Velocity.init();
         context = new VelocityContext();
     }
 
+    /**
+     * Output the content into file on hard drive by given path
+     *
+     * @param path The output path
+     */
     private void outputFile(String path) throws IOException {
         if (template != null) {
             outputFile = new File(revisePath(path) + fileName);
@@ -66,11 +84,16 @@ public abstract class SarrahCommonOutput implements TranslatorOutput {
         } else {
             System.out.println("Template is invalid!");
         }
-
-
     }
 
-    protected boolean initTemplate(String tempName) {
+    /**
+     * Load the template by given template name. Must be called before write
+     * content to the template
+     *
+     * @param tempName The tempalte name without extention
+     * @return True for load successfully; Flase for any exception happened
+     */
+    protected boolean loadTemplate(String tempName) {
         try {
             template = Velocity.getTemplate(tempName + ".txt");
             this.fileName = tempName + "_AgMIP.txt";
