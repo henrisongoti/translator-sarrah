@@ -1,0 +1,5 @@
+#separateur|	;date_format|dd/MM/yyyy;heure_format|hh:mm:ss;float_separateur|,;
+CodePays	Code	Nom	Latitude	Longitude	Altitude	CodeTypeStation	
+#foreach ( $data in $dataArr )
+$!data.wst_loc_1	$!data.wst_id	$!data.wst_id	$!data.wst_lat	$!data.wst_long	$!data.wst_elev	$!data.CodeTypeStation
+#end
